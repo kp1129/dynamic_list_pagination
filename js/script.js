@@ -2,7 +2,6 @@
 Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
-
 //Select the ul element that contains all student records
 //This is what we'll be manipulating for pagination
 const studentList = document.querySelector('ul.student-list');
@@ -48,6 +47,7 @@ function appendPageLinks(records){
     paginationDiv.className = 'pagination';
     page.appendChild(paginationDiv);
     //Default to page 1 view when user first sees the page
+    pageLinksUl.firstElementChild.firstElementChild.className = 'active';
     return showPage(records, 1);
 }
 
@@ -58,6 +58,14 @@ appendPageLinks(records);
 //that correspond with that page number
 paginationDiv.addEventListener('click', (e) => {
     const pageNum = e.target.textContent;
+    const pageLis = paginationDiv.firstElementChild.children;
+    for(let i = 0; i < pageLis.length; i++){
+        if(pageLis[i].firstElementChild === e.target){
+            pageLis[i].firstElementChild.className = 'active';
+        } else {
+            pageLis[i].firstElementChild.classList.remove('active');
+        }
+    }
     return showPage(records, pageNum);
 });
 
