@@ -3,92 +3,62 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
+//Select the ul element that contains all student records
+//This is what we'll be manipulating for pagination
+const studentList = document.querySelector('ul.student-list');
+const records = studentList.children;
 
+//Set how many student records will be displayed on each page
+const recordsPerPage = 10;
 
-/***
-   Add your global variables that store the DOM elements you will
-   need to reference and/or manipulate.
+//Create the div that will hold pagination links
+const paginationDiv = document.createElement('div');
 
-   But be mindful of which variables should be global and which
-   should be locally scoped to one of the two main functions you're
-   going to create. A good general rule of thumb is if the variable
-   will only be used inside of a function, then it can be locally
-   scoped to that function.
-***/
-  const page = document.querySelector('div.page');
-  const studentList = document.querySelector('ul.student-list');
-  const paginationDiv = document.createElement('div');
-  paginationDiv.className = 'pagination';
-
-/***
-   Create the `showPage` function to hide all of the items in the
-   list except for the ten you want to show.
-
-   Pro Tips:
-     - Keep in mind that with a list of 54 students, the last page
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when
-       you initially define the function, and it acts as a variable
-       or a placeholder to represent the actual function `argument`
-       that will be passed into the parens later when you call or
-       "invoke" the function
-***/
-
-function showPage(list, pageNum){
-  const students = list.children;
-  const startIndex = (pageNum * 10) - 10;
-  const endIndex = startIndex + 9;
-
-  for(let i = 0; i < students.length; i++){
-    if(i < startIndex || i > endIndex){
-      students[i].style.display = 'none';
+//The following function determines which student records are displayed
+//based on the page number passed into it
+function showPage(records, pageNumber){
+    const startIndex = (pageNumber * recordsPerPage) - recordsPerPage;
+    const endIndex = startIndex + (recordsPerPage - 1);
+    for(let i = 0; i < records.length; i++){
+        if(i < startIndex || i > endIndex){
+            records[i].style.display = 'none';
+        } else {
+            records[i].style.display = '';
+        }
     }
-  }
-  return students;
+    return records;
 }
 
-
-
-/***
-   Create the `appendPageLinks function` to generate, append, and add
-   functionality to the pagination buttons.
-***/
-  function appendPageLinks(list){
-
-    const ul = document.createElement('ul');
-    const numberOfPages = Math.ceil(list.children.length / 10);
+//The purpose of this function is to create
+//the page links necessary to view the entire list of records
+//and to initiate the first-page view
+function appendPageLinks(records){
+    const page = document.querySelector('div.page');
+    const pageLinksUl = document.createElement('ul');
+    const numberOfPages = Math.ceil(records.length / recordsPerPage);
     for(let i = 1; i <= numberOfPages; i++){
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = '#';
-      a.textContent = i;
-      li.appendChild(a);
-      ul.appendChild(li);
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = i;
+        li.appendChild(a);
+        pageLinksUl.appendChild(li);
     }
-    paginationDiv.appendChild(ul);
+    paginationDiv.appendChild(pageLinksUl);
+    paginationDiv.className = 'pagination';
     page.appendChild(paginationDiv);
+    //Default to page 1 view when user first sees the page
+    return showPage(records, 1);
+}
 
+appendPageLinks(records);
 
-  }
-  paginationDiv.addEventListener('click', (e) => {
-    const pageNum = e.target;
-    const pages = paginationDiv.firstElementChild.children;
+//As the user clicks around to different pages (page links),
+//showPage() is called to display the records
+//that correspond with that page number
+paginationDiv.addEventListener('click', (e) => {
+    const pageNum = e.target.textContent;
+    return showPage(records, pageNum);
+});
 
-    for(let i = 1; i <= pages.length; i++){
-      if(pages[i].firstElementChild.className === 'active'){
-        pages[i].firstElementChild.classList.remove('active');
-      }
-    }
-    pageNum.className = 'active';
-    const pageNumber = pageNum.textContent;
-    
-    showPage(studentList, pageNumber);
-  })
-
-appendPageLinks(studentList);
-
-
-//each function should return something
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
+//pretty cool stuff!
